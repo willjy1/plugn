@@ -10,6 +10,10 @@ use common\models\BankDiscount;
 /* @var $this yii\web\View */
 /* @var $model common\models\Order */
 
+$encode = static function ($value) {
+    return Html::encode((string) $value);
+};
+
 $this->title = 'Order #' . $model->order_uuid;
 $this->params['breadcrumbs'][] = ['label' => 'Orders', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
@@ -46,13 +50,13 @@ $this->registerJs($js);
     <div class="alert alert-danger alert-dismissible">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
         <h5><i class="icon fa fa-ban"></i> Error!</h5>
-        <?= (Yii::$app->session->getFlash('errorResponse')) ?>
+        <?= $encode(Yii::$app->session->getFlash('errorResponse')) ?>
     </div>
 <?php } elseif (Yii::$app->session->getFlash('successResponse') != null) { ?>
     <div class="alert alert-success alert-dismissible">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
         <h5><i class="icon fa fa-check"></i> Success!</h5>
-        <?= (Yii::$app->session->getFlash('successResponse')) ?>
+        <?= $encode(Yii::$app->session->getFlash('successResponse')) ?>
     </div>
 <?php }
 
@@ -195,7 +199,7 @@ if  (
                             'attribute' => 'order_status',
                             'format' => 'html',
                             'value' => function ($data) {
-                                return '<span  style="font-size:25px; font-weight: 700" >' . $data->orderStatusInEnglish . '</span>';
+                                return Html::tag('span', Html::encode($data->orderStatusInEnglish), ['style' => 'font-size:25px; font-weight: 700']);
                             },
                         ],
                         [
@@ -209,7 +213,7 @@ if  (
                         ],
                         [
                             'attribute' => 'business_location_name',
-                            "format" => "raw",
+                            "format" => "text",
                             "value" => function($model) {
                                return $model->business_location_name ? $model->business_location_name : '';
                             },
@@ -291,7 +295,7 @@ if  (
                             'attribute' => 'armada_order_status',
                             'format' => 'raw',
                             'value' => function ($data) {
-                                return $data->armada_order_status ? '<span  style="font-size:20px; font-weight: 700" >' . $data->armada_order_status . '</span>' : null;
+                                return $data->armada_order_status ? Html::tag('span', Html::encode($data->armada_order_status), ['style' => 'font-size:20px; font-weight: 700']) : null;
                             },
                             'visible' => $model->armada_order_status != null,
                         ],
@@ -301,7 +305,7 @@ if  (
                             'attribute' => 'mashkor_order_number',
                             'format' => 'raw',
                             'value' => function ($data) {
-                                return $data->mashkor_order_number ? $data->mashkor_order_number : null;
+                                return $data->mashkor_order_number ? Html::encode($data->mashkor_order_number) : null;
                             },
                             'visible' => $model->mashkor_order_number != null,
                         ],
@@ -309,7 +313,7 @@ if  (
                             'attribute' => 'mashkor_order_status',
                             'format' => 'raw',
                             'value' => function ($data) {
-                                return $data->mashkor_order_status ? '<span  style="font-size:20px; font-weight: 700" >' . Yii::$app->mashkorDelivery->getOrderStatus($data->mashkor_order_status) . '</span>' : null;
+                                return $data->mashkor_order_status ? Html::tag('span', Html::encode(Yii::$app->mashkorDelivery->getOrderStatus($data->mashkor_order_status)), ['style' => 'font-size:20px; font-weight: 700']) : null;
                             },
                             'visible' => $model->mashkor_order_status != null,
                         ],
@@ -327,7 +331,7 @@ if  (
                             'attribute' => 'mashkor_driver_phone',
                             'format' => 'raw',
                             'value' => function ($data) {
-                                return $data->mashkor_driver_phone ? $data->mashkor_driver_phone : null;
+                                return $data->mashkor_driver_phone ? Html::encode($data->mashkor_driver_phone) : null;
                             },
                             'visible' => $model->mashkor_driver_phone != null,
                         ],
@@ -335,7 +339,7 @@ if  (
                             'attribute' => 'mashkor_driver_name',
                             'format' => 'raw',
                             'value' => function ($data) {
-                                return $data->mashkor_driver_name ? $data->mashkor_driver_name : null;
+                                return $data->mashkor_driver_name ? Html::encode($data->mashkor_driver_name) : null;
                             },
                             'visible' => $model->mashkor_driver_name != null,
                         ],
@@ -374,7 +378,7 @@ if  (
                                 'item_name',
                                 [
                                     'label' => 'SKU',
-                                    'format' => 'raw',
+                                    'format' => 'text',
                                     'value' => function ($data) {
 
                                         if($data->variant) {
@@ -386,7 +390,7 @@ if  (
                                 ],
                                 [
                                     'label' => 'Barcode',
-                                    'format' => 'raw',
+                                    'format' => 'text',
                                     //'value' => 'item.barcode',
                                     'value' => function ($data) {
 
@@ -402,7 +406,7 @@ if  (
                                     'attribute' => 'customer_instruction',
                                     'format' => 'html',
                                     'value' => function ($data) {
-                                        return  $data->customer_instruction ? '<b>' . $data->customer_instruction  . '</b>' : '(not set)' ;
+                                        return $data->customer_instruction ? Html::tag('b', Html::encode($data->customer_instruction)) : '(not set)' ;
                                     }
                                 ],
                                 [
@@ -427,7 +431,7 @@ if  (
 
                                         return $extraOptions;
                                     },
-                                    'format' => 'raw'
+                                    'format' => 'text'
                                 ],
                                 [
                                     'label' => 'Subtotal',
@@ -489,7 +493,7 @@ if  (
                         ?>
                         <tbody>
                             <tr>
-                                <td colspan="2">Voucher Discount (<?= $model->voucher->code ?>)</td>
+                                <td colspan="2">Voucher Discount (<?= $encode($model->voucher->code) ?>)</td>
                                 <td style="float: right;">-<?= Yii::$app->formatter->asCurrency(
                                         $voucherDiscount* $model->currency_rate, $model->currency->code, [
                                                 \NumberFormatter::MIN_FRACTION_DIGITS => $model->currency->decimal_place,
@@ -552,7 +556,7 @@ if  (
                         ?>
                         <tbody>
                             <tr>
-                                <td colspan="2">Voucher Discount (<?= $model->voucher->code ?>)</td>
+                                <td colspan="2">Voucher Discount (<?= $encode($model->voucher->code) ?>)</td>
                                 <td style="float: right;">-<?= Yii::$app->formatter->asCurrency($model->delivery_fee* $model->currency_rate, $model->currency->code, [\NumberFormatter::MIN_FRACTION_DIGITS => $model->currency->decimal_place, \NumberFormatter::MAX_FRACTION_DIGITS => $model->currency->decimal_place]) ?></td>
                             </tr>
                         </tbody>
@@ -596,7 +600,7 @@ if  (
                                 <tr class="order-details__summary__detail-line-row">
                                     <td>Refunded</td>
                                     <td class="type--subdued">
-                                        Reason:  <?= $refund->reason ? $refund->reason : ' –' ?>
+                                        Reason:  <?= $refund->reason ? $encode($refund->reason) : ' –' ?>
                                     </td>
                                     <td style="float: right;">-<?= Yii::$app->formatter->asCurrency($refund->refund_amount* $model->currency_rate, $model->currency->code, [\NumberFormatter::MIN_FRACTION_DIGITS => $model->currency->decimal_place, \NumberFormatter::MAX_FRACTION_DIGITS => $model->currency->decimal_place]) ?></td>
                                 </tr>
