@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+"""Static guard for API v2 invoice escaping."""
+
 from pathlib import Path
 import re
 import sys
@@ -9,6 +11,7 @@ INVOICE_VIEW = ROOT / "api" / "modules" / "v2" / "views" / "order" / "invoice.ph
 
 
 def fail(message):
+    """Print a failing check message and exit with a non-zero status."""
     print(f"invoice escaping check failed: {message}", file=sys.stderr)
     sys.exit(1)
 
