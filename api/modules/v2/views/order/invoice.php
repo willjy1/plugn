@@ -1,10 +1,21 @@
 <?php
 
+use common\models\Voucher;
+use yii\helpers\Html;
+
 /* @var $order /Common/models/Order
  * @var  $defaultLogo string
  * @var $bankDiscount /common/models/BankDiscount
  */
 
+$encode = static function ($value) {
+    return Html::encode((string) $value);
+};
+
+$restaurantLogoSrc = 'https://res.cloudinary.com/plugn/image/upload/c_scale,h_105,w_105/restaurants/'
+    . rawurlencode((string) $order->restaurant_uuid)
+    . '/logo/'
+    . rawurlencode((string) $order->restaurant->logo);
 ?>
 <!-- todo: update language support for api endpoint invoice -->
 <div class="ion-content">
@@ -20,26 +31,22 @@
                             <!--
                             <img *ngIf="order.armada_qr_code_link" [src]="order.armada_qr_code_link" width="100" height="100"></img>
 -->
-
-                            <?php use common\models\Voucher;
-
-                            if(!$order->restaurant->logo) { ?>
-                                <img src="<?= $defaultLogo ?>"></img>
+                            <?php if(!$order->restaurant->logo) { ?>
+                                <img src="<?= $encode($defaultLogo) ?>"></img>
                             <?php } else { ?>
                                 <img class="ion-float-start" width="75" height="75"
-                                     src="https://res.cloudinary.com/plugn/image/upload/c_scale,h_105,w_105/restaurants/<?= $order->restaurant_uuid . '/logo/'
-                                     . $order->restaurant->logo ?>"></img>
+                                     src="<?= $encode($restaurantLogoSrc) ?>"></img>
                             <?php } ?>
 
                             <?php if($order->armada_qr_code_link) { ?>
-                                <img class="ion-float-end" src="<?= $order->armada_qr_code_link ?>" width="70" height="70"></img>
+                                <img class="ion-float-end" src="<?= $encode($order->armada_qr_code_link) ?>" width="70" height="70"></img>
                             <?php } ?>
                         </div>
                     </div>
                 </td>
                 <td align="right">
                     <h2 class="txt-invoice-heading">
-                        <b>Invoice</b> <br/>#<?= $order->order_uuid ?>
+                        <b>Invoice</b> <br/>#<?= $encode($order->order_uuid) ?>
 
                         <?php if($order->payment && $order->payment->received_callback && $order->payment->payment_current_status == 'CAPTURED') { ?>
                             <div class="ion-badge status-paid">
@@ -63,7 +70,7 @@
                 <tr style="font-family: Nunito" id="invoice-company-details" class="row">
                     <td style="width:50%" class="text-left">
 
-                    <h3 class="invoice-logo"><?= $order->restaurant->name ?></h3>
+                    <h3 class="invoice-logo"><?= $encode($order->restaurant->name) ?></h3>
                     <!-- <p class="card-text mb-25">Office 149, 450 South Brand Brooklyn</p>
                     <p class="card-text mb-25">San Diego County, CA 91905, USA</p>
                     <p class="card-text mb-0">+1 (123) 456 7891, +44 (876) 543 2198</p> -->
@@ -74,13 +81,13 @@
 
                           <?php if($order->area_id && $order->block) { ?>
                           <p style="font-family: Nunito;">
-                              Block <?= $order->block ?>
+                              Block <?= $encode($order->block) ?>
                           </p>
                           <?php } ?>
 
                           <?php if($order->street) { ?>
                           <p style="font-family: Nunito" >
-                              Street <?= $order->street ?>
+                              Street <?= $encode($order->street) ?>
                           </p>
                           <?php } ?>
 
@@ -88,31 +95,31 @@
 
                               <?php if($order->avenue) { ?>
                                   <p style="font-family: Nunito"  class="txt-avenue">
-                                      Avenue <?= $order->avenue ?>
+                                      Avenue <?= $encode($order->avenue) ?>
                                   </p>
                               <?php } ?>
 
                               <?php if($order->floor) { ?>
                                   <p style="font-family: Nunito"  class="txt-building">
-                                      Floor <?= $order->floor ?>
+                                      Floor <?= $encode($order->floor) ?>
                                   </p>
                               <?php } ?>
 
                               <?php if($order->unit_type && strtolower($order->unit_type) == 'apartment' && $order->apartment) { ?>
                                   <p style="font-family: Nunito"  class="txt-building">
-                                      Apartment No. <?= $order->apartment ?>
+                                      Apartment No. <?= $encode($order->apartment) ?>
                                   </p>
                               <?php } ?>
 
                               <?php if($order->unit_type && strtolower($order->unit_type) == 'office' && $order->office) { ?>
                                   <p style="font-family: Nunito"  class="txt-building">
-                                      Office No. <?= $order->office ?>
+                                      Office No. <?= $encode($order->office) ?>
                                   </p>
                               <?php } ?>
 
                               <?php if($order->unit_type && strtolower($order->unit_type) != 'house' && $order->house_number) { ?>
                                   <p style="font-family: Nunito"  class="txt-building">
-                                      Building <?= $order->house_number ?>
+                                      Building <?= $encode($order->house_number) ?>
                                   </p>
                               <?php } ?>
 
@@ -122,19 +129,19 @@
 
                               <?php if($order->avenue) { ?>
                               <p class="txt-avenue">
-                                  Avenue <?= $order->avenue ?>
+                                  Avenue <?= $encode($order->avenue) ?>
                               </p>
                               <?php } ?>
 
                               <?php if($order->unit_type && strtolower($order->unit_type) == 'house' &&  $order->house_number ) { ?>
                               <p class="txt-house-number">
-                                  House No. <?= $order->house_number ?>
+                                  House No. <?= $encode($order->house_number) ?>
                               </p>
                               <?php } ?>
 
                               <?php if($order->unit_type && strtolower($order->unit_type) != 'house'  &&  $order->house_number ) { ?>
                               <p class="txt-building">
-                                  Building <?= $order->house_number ?>
+                                  Building <?= $encode($order->house_number) ?>
                               </p>
                               <?php } ?>
 
@@ -142,7 +149,7 @@
 
                           <?php if($order->area_id) { ?>
                               <p style="font-family: Nunito" >
-                                  <?= $order->area_name ?>
+                                  <?= $encode($order->area_name) ?>
                               </p>
                           <?php } ?>
 
@@ -150,7 +157,7 @@
 
                         <?php if($order->address_1) { ?>
                             <p class="txt-address-1">
-                                <?= $order->address_1 ?>
+                                <?= $encode($order->address_1) ?>
                             </p>
                         <?php
 
@@ -158,30 +165,30 @@
 
                           if($order->address_2) { ?>
                             <p class="txt-address-2">
-                                <?= $order->address_2 ?>
+                                <?= $encode($order->address_2) ?>
                             </p>
                           <?php }
                         }
 
                          if(($order->area && $order->area->city) || $order->city) { ?>
                         <p style="font-family: Nunito" >
-                            <?= $order->area_id && $order->area->city ? $order->area->city->city_name : $order->city ?> <?= $order->postalcode ?>
+                            <?= $encode($order->area_id && $order->area->city ? $order->area->city->city_name : $order->city) ?> <?= $encode($order->postalcode) ?>
                         </p>
                         <?php } ?>
 
                         <?php if($order->country_name) { ?>
                         <p style="font-family: Nunito" >
-                            <?= $order->country_name ?>
+                            <?= $encode($order->country_name) ?>
                         </p>
                         <?php } ?>
 
                         <p style="font-family: Nunito" class="ltr">
-                            <?= $order->customer_phone_number ?>
+                            <?= $encode($order->customer_phone_number) ?>
                         </p>
                     <?php } else { ?>
 
                         <p style="font-family: Nunito" class=" ltr">
-                            <?= $order->customer_phone_number ?>
+                            <?= $encode($order->customer_phone_number) ?>
                         </p>
                     <?php } ?>
 
@@ -196,16 +203,16 @@
                     <td>
                         <table>
                             <tr>
-                                <td><strong>Customer</strong> : <?= $order->customer_name ?></td>
+                                <td><strong>Customer</strong> : <?= $encode($order->customer_name) ?></td>
                             </tr>
                             <tr>
-                                <td><strong>Payment Method</strong> : <?= $order->payment_method_name ?></td>
+                                <td><strong>Payment Method</strong> : <?= $encode($order->payment_method_name) ?></td>
                             </tr>
 
                                 <tr>
                                     <td>
                                       <?php if($order->special_directions) { ?>
-                                        <strong>Special Direction</strong>:<?=($order->special_directions) ? $order->special_directions : '';?>
+                                        <strong>Special Direction</strong>:<?= $order->special_directions ? $encode($order->special_directions) : '' ?>
                                       <?php } ?>
                                     </td>
                                 </tr>
@@ -253,19 +260,19 @@
                                 <tr>
                                     <td align="start">
                                         <b>
-                                            <?= $orderItem->item_name ?>
+                                            <?= $encode($orderItem->item_name) ?>
                                             <!-- todo: extraOptionsToText(orderItem.orderItemExtraOptions)  -->
                                         </b>
                                     </td>
-                                    <td align="center"><?= $orderItem->item? $orderItem->item->sku: '' ?></td>
-                                    <td align="center"><?= $orderItem->item? $orderItem->item->barcode: '' ?></td>
-                                    <td align="center"><?= $orderItem->customer_instruction ?></td>
-                                    <td align="center"><?= $orderItem->qty ?></td>
-                                    <td align="start"><?= $orderItem->getOrderExtraOptionsText() ?>
-                                        <?= $orderItem->getDimenstionToText() ?></td>
+                                    <td align="center"><?= $encode($orderItem->item ? $orderItem->item->sku : '') ?></td>
+                                    <td align="center"><?= $encode($orderItem->item ? $orderItem->item->barcode : '') ?></td>
+                                    <td align="center"><?= $encode($orderItem->customer_instruction) ?></td>
+                                    <td align="center"><?= $encode($orderItem->qty) ?></td>
+                                    <td align="start"><?= $encode($orderItem->getOrderExtraOptionsText()) ?>
+                                        <?= $encode($orderItem->getDimenstionToText()) ?></td>
                                     <td align="end">
                                         <!-- currency rate calculation? -->
-                                        <?= $orderItem->currency? $orderItem->currency->code: '' ?> <?= $orderItem->item_price ?>
+                                        <?= $encode($orderItem->currency ? $orderItem->currency->code : '') ?> <?= $encode($orderItem->item_price) ?>
                                     </td>
                                 </tr>
                                 <?php } ?>
@@ -299,7 +306,7 @@
 
                                             <?php if($order->voucher_discount && $order->discount_type != Voucher::DISCOUNT_TYPE_FREE_DELIVERY) { ?>
                                                 <tr>
-                                                    <td align="start" colspan="3">Voucher Discount (<?= $order->voucher->code ?>)</td>
+                                                    <td align="start" colspan="3">Voucher Discount (<?= $encode($order->voucher->code) ?>)</td>
                                                     <td align="end">
 
                                                         <?= Yii::$app->formatter->asCurrency(
@@ -391,7 +398,7 @@
                                             <?php if($order->discount_type == 3) { ?>
 
                                                 <tr>
-                                                    <td align="start" colspan="3">Voucher Discount (<?= $order->voucher->code ?>)</td>
+                                                    <td align="start" colspan="3">Voucher Discount (<?= $encode($order->voucher->code) ?>)</td>
                                                     <td align="end">
 
                                                         <?= Yii::$app->formatter->asCurrency(
@@ -409,7 +416,7 @@
 
                                                 <tr>
                                                     <td align="start" colspan="3">Delivery fee After Voucher</td>
-                                                    <td align="end"><?= $order->currency->code ?> 0.000</td>
+                                                    <td align="end"><?= $encode($order->currency->code) ?> 0.000</td>
                                                 </tr>
 
                                             <?php }
